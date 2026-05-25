@@ -1,6 +1,6 @@
 {
   "name": "@quickcontract/mcp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "QuickContract MCP server — sign contracts, release escrow, query portfolios from any MCP-aware AI agent (Claude Desktop, Cursor, Anthropic Agents SDK, OpenAI Agents).",
   "type": "module",
   "main": "src/server-stdio.js",
@@ -38,9 +38,6 @@
     "type": "git",
     "url": "https://github.com/QuickContractIO/mcp.git"
   },
-  "bugs": {
-    "url": "https://github.com/QuickContractIO/mcp/issues"
-  },
   "license": "MIT",
   "author": "QuickContract <support@quickcontract.io>",
   "engines": {
@@ -48,5 +45,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/QuickContractIO/mcp/issues"
   }
 }

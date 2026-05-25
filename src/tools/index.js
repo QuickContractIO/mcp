@@ -21,6 +21,7 @@
 
 // READ tools — no mandate dependency.
 import * as listContracts from './read/list-contracts.js';
+import * as listPendingApprovals from './read/list-pending-approvals.js';
 import * as getContract from './read/get-contract.js';
 import * as getContractStatus from './read/get-contract-status.js';
 import * as verifyHash from './read/verify-hash.js';
@@ -42,6 +43,7 @@ import * as reportEvent from './write/report-event.js';
 
 const ALL = [
   listContracts,
+  listPendingApprovals,
   getContract,
   getContractStatus,
   verifyHash,
