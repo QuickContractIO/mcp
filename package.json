@@ -1,6 +1,6 @@
 {
   "name": "@quickcontract/mcp",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "QuickContract MCP server — sign contracts, release escrow, query portfolios from any MCP-aware AI agent (Claude Desktop, Cursor, Anthropic Agents SDK, OpenAI Agents).",
   "type": "module",
   "main": "src/server-stdio.js",

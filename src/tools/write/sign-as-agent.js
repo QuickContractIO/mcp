@@ -46,5 +46,28 @@ export async function handler(args, { client }) {
   if (!res.ok) {
     return { content: [{ type: 'text', text: formatBackendError(res) }], isError: true };
   }
-  return { content: [{ type: 'text', text: JSON.stringify(res.data, null, 2) }] };
+  // Render the response as a readable summary FIRST (so the LLM surfaces
+  // the permalink URL prominently in chat rather than burying it inside
+  // raw JSON), then attach the full JSON as a follow-up block for tools
+  // that need to introspect the agentSignature payload.
+  const data = res.data;
+  const publicHost = (process.env.QC_PUBLIC_HOST || 'quickcontract.io').replace(/\/+$/, '');
+  const url = data.permalink ? `https://${publicHost}/c/${data.permalink}` : null;
+  const lines = [
+    `Signed ${data.party === 'partyA' ? 'Party A' : 'Party B'} on contract ${args.contractId}.`,
+    `Status: ${data.status}`,
+    `Signed at: ${data.signedAt}`,
+  ];
+  if (url) lines.push(`Permalink: ${url}`);
+  if (data.agentSignature?.did) lines.push(`Agent DID: ${data.agentSignature.did}`);
+  if (data.agentSignature?.signedContentHash) {
+    const h = data.agentSignature.signedContentHash;
+    lines.push(`Content hash: ${h.slice(0, 16)}…${h.slice(-8)}`);
+  }
+  if (data.agentSignature?.signature) {
+    const s = data.agentSignature.signature;
+    lines.push(`Signature: ${s.slice(0, 16)}…${s.slice(-8)} (Ed25519)`);
+  }
+  const summary = lines.join('\n');
+  return { content: [{ type: 'text', text: `${summary}\n\nFull response:\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\`` }] };
 }

@@ -55,5 +55,22 @@ export async function handler(args, { client }) {
   if (!res.ok) {
     return { content: [{ type: 'text', text: formatBackendError(res) }], isError: true };
   }
-  return { content: [{ type: 'text', text: JSON.stringify(res.data, null, 2) }] };
+  // Format as a readable list so the LLM surfaces permalinks + contractIds
+  // in chat. Calling tools like sign_as_agent need contractId; humans
+  // reading along want the permalink URL. Show both.
+  const data = res.data;
+  const publicHost = (process.env.QC_PUBLIC_HOST || 'quickcontract.io').replace(/\/+$/, '');
+  const items = data.data || [];
+  if (items.length === 0) {
+    return { content: [{ type: 'text', text: 'No contracts pending your action.' }] };
+  }
+  const lines = [`${data.total ?? items.length} contract(s) waiting on your action:`, ''];
+  for (const c of items) {
+    const url = c.permalink ? `https://${publicHost}/c/${c.permalink}` : null;
+    lines.push(`• ${c.contractName}`);
+    lines.push(`  id: ${c._id}  ·  status: ${c.status}`);
+    if (url) lines.push(`  permalink: ${url}`);
+    lines.push('');
+  }
+  return { content: [{ type: 'text', text: lines.join('\n').trimEnd() }] };
 }
